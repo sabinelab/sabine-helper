@@ -13,7 +13,7 @@
     "oceanic-transcripts": "^1.1.1",
     "oceanic.js": "^1.12.0",
     "players": "github:SabineBot/players",
-    "stripe": "^18.4.0"
+    "stripe": "^19.1.0"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
