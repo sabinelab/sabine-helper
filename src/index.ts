@@ -45,7 +45,7 @@ const webhook_route: FastifyPluginAsyncTypebox = async(fastify) => {
 
         const user = await SabineUser.fetch(args[1]) || new SabineUser(args[1])
 
-        let keyId = await user.addPremium('BUY_PREMIUM')
+        const keyId = await user.addPremium('BUY_PREMIUM')
 
         const embed = new EmbedBuilder()
           .setTitle('Pagamento Aprovado')
