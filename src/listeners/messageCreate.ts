@@ -38,11 +38,11 @@ export default createListener({
       args
     })
 
-    const getUser = async (user: string) => {
+    const getUser = async(user: string) => {
       try {
         return await client.rest.users.get(user.replace(/[<@!>]/g, ''))
       }
-      catch(e) {
+      catch (e) {
         new Logger(client).error(e as Error)
       }
     }
