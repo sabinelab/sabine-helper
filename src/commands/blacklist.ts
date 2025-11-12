@@ -7,7 +7,7 @@ export default createCommand({
   onlyDev: true,
   async run({ ctx, getUser, client }) {
     let reason = ctx.args.slice(3).join(' ')
-    let time = ms(ctx.args[3] ?? 'asd')
+    const time = ms(ctx.args[3] ?? 'asd')
 
     if(time) reason = ctx.args.slice(4).join(' ')
 
