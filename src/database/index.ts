@@ -2,7 +2,6 @@ import {
   $Enums,
   type Event,
   type Guild,
-  type GuildKey,
   type Key,
   type LiveMessage,
   type Premium,
