@@ -17,7 +17,7 @@ client.connect()
 
 const cache = new Set<string>()
 
-const webhook_route: FastifyPluginAsyncTypebox = async(fastify, opts) => {
+const webhook_route: FastifyPluginAsyncTypebox = async(fastify) => {
   fastify.post('/mercadopago', {
     schema: {
       body: Type.Object({
