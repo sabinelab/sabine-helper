@@ -84,7 +84,7 @@ export default createListener({
         if(member) {
           await member.removeRole('1314272663316856863')
           member.user.createDM().then(dm => dm.createMessage({
-            content: `Your premium has expired! If you want to renew your premium, go to https://canary.discord.com/channels/1233965003850125433/1313902950426345492 and select a premium!`
+            content: 'Your premium has expired! If you want to renew your premium, go to https://canary.discord.com/channels/1233965003850125433/1313902950426345492 and select a premium!'
           }))
           .catch()
         }
@@ -258,7 +258,7 @@ export default createListener({
         for(const guild of guilds) {
           content += `- ${guild.invite}\n`
         }
-        
+
         await message.edit({ content })
       }
     }
