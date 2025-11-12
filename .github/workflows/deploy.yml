@@ -2,10 +2,15 @@ name: deploy
 on:
   push:
     branches:
-      - "main"
+      - 'main'
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'README*'
+      - 'LICENSE'
 jobs:
   deploy:
-    name: "Deploy to Production"
+    name: 'Deploy to Production'
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
@@ -27,6 +32,8 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.HOST }}
           SSH_PORT: 22
-      - name: update sabine mod
+      - name: update sabine core
+        env:
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ssh prod 'cd sabine/mod && git pull && docker compose up -d --build'
+          ssh prod 'cd sabine/core && git pull && GITHUB_AUTH_TOKEN=$GITHUB_AUTH_TOKEN docker compose up -d --build'
