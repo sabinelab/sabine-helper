@@ -12,15 +12,15 @@ export default class ButtonBuilder {
   public setStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
     switch(style.toLowerCase()) {
       case 'blue': this.style = Constants.ButtonStyles.PRIMARY
-      break
+        break
       case 'gray': this.style = Constants.ButtonStyles.SECONDARY
-      break
+        break
       case 'green': this.style = Constants.ButtonStyles.SUCCESS
-      break
+        break
       case 'red': this.style = Constants.ButtonStyles.DANGER
-      break
+        break
       case 'link': this.style = Constants.ButtonStyles.LINK
-      break
+        break
       default: throw new Error('Invalid style! Please, choose: \'BLUE\', \'GRAY\', \'GREEN\', \'RED\', \'LINK\'')
     }
 
@@ -61,7 +61,7 @@ export default class ButtonBuilder {
     this.disabled = false
     return this
   }
-  
+
   public build(content?: string | InteractionContent) {
     if(typeof content === 'string') {
       return {
