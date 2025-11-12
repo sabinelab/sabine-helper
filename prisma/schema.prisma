@@ -20,69 +20,56 @@ model User {
   coins                    BigInt        @default(0)
   team_name                String?       @db.VarChar(20)
   team_tag                 String?       @db.VarChar(4)
+  arena_wins               Int           @default(0) @db.SmallInt
   ranked_wins              Int           @default(0) @db.SmallInt
   unranked_wins            Int           @default(0) @db.SmallInt
   swiftplay_wins           Int           @default(0) @db.SmallInt
   ranked_swiftplay_wins    Int           @default(0) @db.SmallInt
+  arena_defeats            Int           @default(0) @db.SmallInt
   ranked_defeats           Int           @default(0) @db.SmallInt
   unranked_defeats         Int           @default(0) @db.SmallInt
   swiftplay_defeats        Int           @default(0) @db.SmallInt
   ranked_swiftplay_defeats Int           @default(0) @db.SmallInt
+  arena_metadata           Json?
   daily_time               DateTime?
   claim_time               DateTime?
   warn                     Boolean       @default(false)
   pity                     Int           @default(0) @db.SmallInt
   claims                   Int           @default(0)
   fates                    Int           @default(0) @db.SmallInt
-  rank_rating              Int           @default(50) @db.SmallInt
-  elo                      Int           @default(0) @db.SmallInt
-  // UNRANKED 0
-  // IRON 1
-  // IRON 2
-  // IRON 3
-  // BRONZE 4
-  // BRONZE 5
-  // BRONZE 6
-  // SILVER 7
-  // SILVER 8
-  // SILVER 9
-  // GOLD 10
-  // GOLD 11
-  // GOLD 12
-  // PLATINUM 13
-  // PLATINUM 14
-  // PLATINUM 15
-  // DIAMOND 16
-  // DIAMOND 17
-  // DIAMOND 18
-  // ASCENDANT 19
-  // ASCENDANT 20
-  // ASCENDANT 21
-  // IMMORTAL 22
-  // IMMORTAL 23
-  // IMMORTAL 24
-  // RADIANT 25
+  rank_rating              Int           @default(0)
   remind                   Boolean?
   remind_in                String?
   reminded                 Boolean       @default(true)
-  boxes                    Box[]
   transactions             Transaction[]
   career                   Match[]
   trade_time               DateTime?
   warned                   Boolean?
+  iron_packs               Int           @default(0)
+  bronze_packs             Int           @default(0)
+  silver_packs             Int           @default(0)
+  gold_packs               Int           @default(0)
+  platinum_packs           Int           @default(0)
+  diamond_packs            Int           @default(0)
+  ascendant_packs          Int           @default(0)
+  immortal_packs           Int           @default(0)
+  radiant_packs            Int           @default(0)
+  last_vote                DateTime?
+  vote_streak              Int           @default(0)
 
-  @@index([coins, correct_predictions, rank_rating, elo])
+  @@index([coins, correct_predictions, rank_rating, arena_wins])
 }
 
 model Match {
-  id     String       @id @default(uuid())
-  user   User         @relation(fields: [userId], references: [id])
-  userId String
-  mode   MatchMode
-  winner Boolean
-  teams  CareerTeam[]
-  points Int?         @db.SmallInt
-  when   DateTime     @default(now())
+  id       BigInt       @id @default(autoincrement())
+  user     User         @relation(fields: [userId], references: [id])
+  userId   String
+  mode     MatchMode
+  winner   Boolean
+  teams    CareerTeam[]
+  points   Int?         @db.SmallInt
+  metadata Json?
+  when     DateTime     @default(now())
 
   @@index([userId])
 }
@@ -90,7 +77,7 @@ model Match {
 model CareerTeam {
   id      String @id @default(uuid())
   match   Match  @relation(fields: [matchId], references: [id])
-  matchId String
+  matchId BigInt
   user    String
   score   Int    @db.SmallInt
 
@@ -102,7 +89,8 @@ model Transaction {
   user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
   type       TransactionType
-  player     Int             @db.SmallInt
+  player     Int?            @db.SmallInt
+  pack       Pack?
   price      BigInt?
   to         String?
   created_at DateTime        @default(now())
@@ -201,9 +189,10 @@ model Key {
 }
 
 model TBDMatch {
-  id      String    @id
+  id      String    @id @default(uuid())
   guild   Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
   guildId String
+  matchId String
   type    EventType
   channel String
 
@@ -249,6 +238,18 @@ model Blacklist {
   @@index([type])
 }
 
+enum Pack {
+  IRON
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+  ASCENDANT
+  IMMORTAL
+  RADIANT
+}
+
 enum BlacklistType {
   USER
   GUILD
@@ -270,6 +271,7 @@ enum MatchMode {
   RANKED_SWIFTPLAY
   SWIFTPLAY
   TOURNAMENT
+  ARENA
 }
 
 enum TransactionType {
@@ -278,18 +280,8 @@ enum TransactionType {
   SELL_PLAYER
   TRADE_PLAYER
   SIGN_PLAYER
-}
-
-enum Box {
-  IRON
-  BRONZE
-  SILVER
-  GOLD
-  PLATINUM
-  DIAMOND
-  ASCENDANT
-  IMMORTAL
-  RADIANT
+  CLAIM_PACK_BY_VOTE
+  CLAIM_PLAYER_BY_PACK
 }
 
 enum PremiumType {

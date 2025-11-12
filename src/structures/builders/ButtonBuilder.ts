@@ -1,4 +1,4 @@
-import { Constants, type InteractionContent, type NullablePartialEmoji, type URLButton } from "oceanic.js"
+import { Constants, type InteractionContent, type NullablePartialEmoji, type URLButton } from 'oceanic.js'
 
 export default class ButtonBuilder {
   public type: number = 2
@@ -8,6 +8,7 @@ export default class ButtonBuilder {
   public emoji?: NullablePartialEmoji
   public url!: string
   public disabled?: boolean
+
   public setStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
     switch(style.toLowerCase()) {
       case 'blue': this.style = Constants.ButtonStyles.PRIMARY
@@ -22,16 +23,20 @@ export default class ButtonBuilder {
       break
       default: throw new Error('Invalid style! Please, choose: \'BLUE\', \'GRAY\', \'GREEN\', \'RED\', \'LINK\'')
     }
+
     return this
   }
+
   public setLabel(label: string) {
     this.label = label
     return this
   }
+
   public setCustomId(id: string) {
     this.customID = id
     return this
   }
+
   public setEmoji(emoji: string) {
     if(isNaN(Number(emoji))) this.emoji = {
       name: emoji
@@ -41,22 +46,26 @@ export default class ButtonBuilder {
     }
     return this
   }
+
   public setURL(url: string) {
     this.url = url
     return this as unknown as URLButton
   }
+
   public setDisabled() {
     this.disabled = true
     return this
   }
+
   public setEnabled() {
     this.disabled = false
     return this
   }
+  
   public build(content?: string | InteractionContent) {
-    if(typeof content === "string") {
+    if(typeof content === 'string') {
       return {
-        content: content ?? "",
+        content: content ?? '',
         components: [
           {
             type: 1,

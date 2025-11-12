@@ -1,4 +1,10 @@
-import { Constants, type InteractionContent, type NullablePartialEmoji, type SelectOption, type StringSelectMenu } from "oceanic.js"
+import {
+  Constants,
+  type InteractionContent,
+  type NullablePartialEmoji,
+  type SelectOption,
+  type StringSelectMenu
+} from 'oceanic.js'
 
 export default class SelectMenuBuilder {
   public type: number = Constants.ComponentTypes.STRING_SELECT
@@ -8,45 +14,56 @@ export default class SelectMenuBuilder {
   public minValues?: number
   public maxValues?: number
   public disabled?: boolean
+
   public constructor(type?: 3 | 5 | 6 | 7 | 8) {
     if(type) this.type = type
   }
+
   public setCustomId(id: string) {
     this.customID = id
     return this
   }
+
   public setPlaceholder(text: string) {
     this.placeholder = text
     return this
   }
+
   public addOption(label: string, value: string, description?: string, emoji?: NullablePartialEmoji) {
     this.options.push({ label, value, description, emoji })
     return this
   }
+
   public addOptions(...options: SelectOption[]) {
     this.options.push(...options)
     return this
   }
+
   public setOption(label: string, value: string, description?: string, emoji?: NullablePartialEmoji) {
     this.options = [{ label, value, description, emoji }]
     return this
   }
+
   public setOptions(...options: SelectOption[]) {
     this.options = options
     return this
   }
+
   public setMin(min: number) {
     this.minValues = min
     return this
   }
+
   public setMax(max: number) {
     this.maxValues = max
     return this
   }
+
   public setDisabled(disabled = true) {
     this.disabled = disabled
     return this
   }
+
   public build(content?: string | InteractionContent) {
     const menu: StringSelectMenu = {
       type: this.type,
@@ -57,9 +74,10 @@ export default class SelectMenuBuilder {
       maxValues: this.maxValues,
       disabled: this.disabled,
     }
-    if(typeof content === "string") {
+    
+    if(typeof content === 'string') {
       return {
-        content: content ?? "",
+        content: content ?? '',
         components: [
           {
             type: 1,

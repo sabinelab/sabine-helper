@@ -1,6 +1,6 @@
-import { Member, User } from "oceanic.js"
-import App from "../client/App.ts"
-import CommandContext from "./CommandContext.ts"
+import { Member, User } from 'oceanic.js'
+import App from '../client/App.ts'
+import CommandContext from './CommandContext.ts'
 
 type CommandOptions = {
   ctx: CommandContext
@@ -8,10 +8,12 @@ type CommandOptions = {
   getMember: (member: string) => Member | undefined
   getUser: (user: string) => Promise<User | undefined>
 }
+
 type CreateComponentInteractionOptions = {
   ctx: CommandContext
   client: App
 }
+
 export type Command = {
   name: string
   aliases?: string[]
@@ -21,11 +23,10 @@ export type Command = {
   onlyBooster?: boolean
   onlyPremium?: boolean
   onlyBoosterAndPremium?: boolean
-  run: (options: CommandOptions) => Promise<any>
-  createInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>
+  run: (options: CommandOptions) => Promise<unknown>
+  createInteraction?: (options: CreateComponentInteractionOptions) => Promise<unknown>
 }
-export default function(
-  command: Command
-): Command {
+
+export default function(command: Command) {
   return command
 }
