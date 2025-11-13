@@ -1,7 +1,5 @@
 FROM node:24.11.1-alpine
 
-ARG GITHUB_AUTH_TOKEN
-
 RUN corepack enable pnpm
 
 WORKDIR /app
