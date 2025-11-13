@@ -3,8 +3,8 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    image: sabine-mod
-    container_name: sabine-mod
+    image: sabine-core
+    container_name: sabine-core
     restart: unless-stopped
     ports:
       - "3000:3000"
