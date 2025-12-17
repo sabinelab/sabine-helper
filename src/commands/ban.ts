@@ -1,4 +1,4 @@
-import { TextChannel } from 'oceanic.js'
+import { TextChannel } from 'discord.js'
 import createCommand from '../structures/command/createCommand'
 
 export default createCommand({
@@ -32,28 +32,28 @@ export default createCommand({
       case 'nsfw': reason = 'Sharing NSFW content in text or voice channels.'
     }
 
-    await user.createDM().then(dm => dm.createMessage({
+    await user.createDM().then(dm => dm.send({
       content: `You have been banned from \`${ctx.guild.name}\` for \`${reason}\``
     }))
       .catch(() => { })
 
-    await ctx.guild.createBan(user.id, {
+    await ctx.guild.bans.create(user.id, {
       reason
     })
 
     await ctx.send(`\`${user.tag}\` (\`${user.id}\`) have been banned for \`${reason}\``)
 
-    const channel = client.getChannel(process.env.MOD_LOG) as TextChannel
+    const channel = client.channels.cache.get(process.env.MOD_LOG) as TextChannel
 
-    channel.createMessage({
+    channel.send({
       content: `\`${user.tag}\` (\`${user.id}\`) have been banned for \`${reason}\``
     })
       .then(msg => {
         msg.startThread({
           name: `Ban ${user.tag} (${user.id})`
         })
-          .then(t => t.createMessage({
-            content: `${ctx.message.author.mention}, send the evidence of the punishment here.`
+          .then(t => t.send({
+            content: `${ctx.message.author.toString()}, send the evidence of the punishment here.`
           }))
       })
   }

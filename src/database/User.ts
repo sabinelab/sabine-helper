@@ -5,7 +5,7 @@ import {
 } from '@generated'
 import { client } from '..'
 import EmbedBuilder from '../structures/builders/EmbedBuilder'
-import { TextChannel } from 'oceanic.js'
+import { TextChannel } from 'discord.js'
 import { prisma, redis } from '@/database'
 import { updateCache, voidCatch } from '@/database/update-cache'
 import { hydrateData } from '@/database/hydrate-data'
@@ -205,13 +205,13 @@ export class SabineUser implements User {
     ])
     await redis.del(`user:${this.id}`)
 
-    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+    const channel = client.channels.cache.get(process.env.USERS_LOG) as TextChannel
 
-    const user = client.users.get(this.id)
+    const user = client.users.cache.get(this.id)
 
     const embed = new EmbedBuilder()
       .setTitle('New register')
-      .setDesc(`User: ${user?.mention} (${this.id})`)
+      .setDesc(`User: ${user?.toString()} (${this.id})`)
       .setFields(
         {
           name: by,
@@ -219,13 +219,13 @@ export class SabineUser implements User {
         }
       )
 
-    const webhooks = await channel.getWebhooks()
-    let webhook = webhooks.filter(w => w.name === client.user.username + ' Logger')[0]
+    const webhooks = await channel.fetchWebhooks()
+    let webhook = webhooks.find(w => w.name === client.user?.username + ' Logger')
 
-    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + ' Logger' })
+    if(!webhook) webhook = await channel.createWebhook({ name: client.user?.username + ' Logger' })
 
-    await webhook.execute({
-      avatarURL: client.user.avatarURL(),
+    await webhook.send({
+      avatarURL: client.user?.displayAvatarURL({ size: 2048 }),
       embeds: [embed]
     })
 

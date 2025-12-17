@@ -14,6 +14,6 @@ export default createCommand({
     const user = await SabineUser.fetch(duser.id) ?? new SabineUser(duser.id)
 
     await user.addPremium('ADD_PREMIUM_BY_COMMAND')
-    await ctx.send(`Premium activated for ${duser.mention}`)
+    await ctx.send(`Premium activated for ${duser.toString()}`)
   }
 })

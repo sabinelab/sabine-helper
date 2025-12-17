@@ -5,7 +5,7 @@ export default createCommand({
   onlyMod: true,
   async run({ ctx, getUser, client }) {
     const args = {
-      user: async() => {
+      user: async () => {
         const u = await getUser(ctx.args[1])
 
         if(!u) return await ctx.send('Enter a valid user ID.')
@@ -28,7 +28,7 @@ export default createCommand({
 
         await ctx.send(`\`${u.tag}\` is banned from the bot.\n**Reason:** \`${ban.reason}\`\n**Date:** <t:${when}:f> | <t:${when}:R>\n**Ends at:** ${!timestamp ? 'Never' : `<t:${timestamp}:F> | <t:${timestamp}:R>`}`)
       },
-      guild: async() => {
+      guild: async () => {
         if(!ctx.args[1]) return await ctx.send('Enter a valid guild ID.')
 
         const ban = await client.prisma.blacklist.findUnique({

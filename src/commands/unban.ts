@@ -1,4 +1,4 @@
-import { TextChannel } from 'oceanic.js'
+import { TextChannel } from 'discord.js'
 import createCommand from '../structures/command/createCommand'
 
 export default createCommand({
@@ -14,14 +14,14 @@ export default createCommand({
       return await ctx.send('Please provide a valid user.')
     }
 
-    await ctx.guild.removeBan(user.id)
+    await ctx.guild.bans.remove(user.id)
 
-    await ctx.send(`\`${user.tag}\` (\`${user.id}\`) has been unbanned for ${ctx.message.author.mention}`)
+    await ctx.send(`\`${user.tag}\` (\`${user.id}\`) has been unbanned for ${ctx.message.author.toString()}`)
 
-    const channel = client?.getChannel(process.env.MOD_LOG) as TextChannel
+    const channel = client.channels.cache.get(process.env.MOD_LOG) as TextChannel
 
-    await channel.createMessage({
-      content: `\`${user.tag}\` (\`${user.id}\`) has been unbanned for ${ctx.message.author.mention}`
+    await channel.send({
+      content: `\`${user.tag}\` (\`${user.id}\`) has been unbanned for ${ctx.message.author.toString()}`
     })
   }
 })

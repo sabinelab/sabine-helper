@@ -1,4 +1,4 @@
-import { TextChannel } from 'oceanic.js'
+import { TextChannel } from 'discord.js'
 import ms from 'enhanced-ms'
 import translate from '@iamtraction/google-translate'
 import createCommand from '../structures/command/createCommand'
@@ -38,7 +38,7 @@ export default createCommand({
       case 'nsfw': reason = 'Sharing NSFW content in text or voice channels.'
     }
 
-    await member.user.createDM().then(dm => dm.createMessage({
+    await member.user.createDM().then(dm => dm.send({
       content: `You have been muted **${ms(ms(time))}** in \`${ctx.guild.name}\` for \`${reason}\``
     }))
       .catch(() => { })
@@ -51,19 +51,19 @@ export default createCommand({
       to: 'pt'
     })).text
 
-    await ctx.send(`\`${member.tag}\` (\`${member.id}\`) has been timed out for **${t}** for \`${reason}\``)
+    await ctx.send(`\`${member.user.username}\` (\`${member.id}\`) has been timed out for **${t}** for \`${reason}\``)
 
-    const channel = client.getChannel(process.env.MOD_LOG) as TextChannel
+    const channel = client.channels.cache.get(process.env.MOD_LOG) as TextChannel
 
-    await channel.createMessage({
-      content: `\`${member.tag}\` (\`${member.id}\`) has been muted for **${t}** for \`${reason}\``
+    await channel.send({
+      content: `\`${member.user.username}\` (\`${member.id}\`) has been muted for **${t}** for \`${reason}\``
     })
       .then(msg => {
         msg.startThread({
-          name: `Timeout ${member.tag} (${member.id})`
+          name: `Timeout ${member.user.username} (${member.id})`
         })
-          .then(t => t.createMessage({
-            content: `${ctx.message.author.mention}, send the evidence of the punishment here.`
+          .then(t => t.send({
+            content: `${ctx.message.author.toString()}, send the evidence of the punishment here.`
           }))
       })
   }

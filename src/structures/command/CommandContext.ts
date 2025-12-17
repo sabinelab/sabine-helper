@@ -1,6 +1,12 @@
-import { type File, Guild, type InteractionContent, Message, TextChannel } from 'oceanic.js'
+import {
+  Message,
+  type MessageReplyOptions,
+  type AttachmentBuilder,
+  type AttachmentPayload,
+  Guild
+} from 'discord.js'
 import App from '../client/App'
-import { SabineGuild, SabineUser } from '../../database'
+import { SabineGuild, SabineUser } from '@/database'
 
 type Database = {
   user: SabineUser,
@@ -10,7 +16,7 @@ type Database = {
 type CommandContextOptions = {
   client: App
   guild: Guild
-  message: Message<TextChannel>
+  message: Message<true>
   db: Database
   args: string[]
 }
@@ -18,7 +24,7 @@ type CommandContextOptions = {
 export default class CommandContext {
   public client: App
   public guild: Guild
-  public message: Message<TextChannel>
+  public message: Message<true>
   public db: Database
   public args: string[]
 
@@ -30,7 +36,7 @@ export default class CommandContext {
     this.args = options.args
   }
 
-  public async send(content: string | InteractionContent, files?: File[]) {
+  public async send(content: string | MessageReplyOptions, files?: (AttachmentBuilder | AttachmentPayload)[]) {
     if(typeof content === 'string') {
       content = { content }
     }
@@ -42,6 +48,6 @@ export default class CommandContext {
       }
     }
 
-    return await this.message.channel.createMessage(content)
+    return await this.message.reply(content)
   }
 }

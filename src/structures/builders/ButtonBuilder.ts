@@ -1,68 +1,67 @@
-import { Constants, type InteractionContent, type NullablePartialEmoji, type URLButton } from 'oceanic.js'
+import {
+  ButtonBuilder as DJSButtonBuilder,
+  ButtonStyle,
+  type InteractionReplyOptions,
+} from 'discord.js'
 
-export default class ButtonBuilder {
-  public type: number = 2
-  public style!: 1 | 2 | 3 | 4 | 5
-  public label?: string
-  public customID!: string
-  public emoji?: NullablePartialEmoji
-  public url!: string
-  public disabled?: boolean
-
-  public setStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
+export default class ButtonBuilder extends DJSButtonBuilder {
+  public defineStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
     switch(style.toLowerCase()) {
-      case 'blue': this.style = Constants.ButtonStyles.PRIMARY
+      case 'blue': super.setStyle(ButtonStyle.Primary)
         break
-      case 'gray': this.style = Constants.ButtonStyles.SECONDARY
+      case 'gray': super.setStyle(ButtonStyle.Secondary)
         break
-      case 'green': this.style = Constants.ButtonStyles.SUCCESS
+      case 'green': super.setStyle(ButtonStyle.Success)
         break
-      case 'red': this.style = Constants.ButtonStyles.DANGER
+      case 'red': super.setStyle(ButtonStyle.Danger)
         break
-      case 'link': this.style = Constants.ButtonStyles.LINK
+      case 'link': super.setStyle(ButtonStyle.Link)
         break
-      default: throw new Error('Invalid style! Please, choose: \'BLUE\', \'GRAY\', \'GREEN\', \'RED\', \'LINK\'')
+      default: throw new Error('Invalid style! Please, choose: "BLUE", "GRAY", "GREEN", "RED", "LINK"')
     }
 
     return this
   }
 
   public setLabel(label: string) {
-    this.label = label
+    super.setLabel(label)
+
     return this
   }
 
   public setCustomId(id: string) {
-    this.customID = id
+    super.setCustomId(id)
+
     return this
   }
 
-  public setEmoji(emoji: string) {
-    if(isNaN(Number(emoji))) this.emoji = {
-      name: emoji
-    }
-    else this.emoji = {
-      id: emoji
-    }
+  public setEmoji(emoji: string, animated?: boolean) {
+    if(isNaN(Number(emoji))) super.setEmoji({ name: emoji })
+
+    else super.setEmoji({ id: emoji, animated })
+
     return this
   }
 
   public setURL(url: string) {
-    this.url = url
-    return this as unknown as URLButton
+    super.setURL(url)
+
+    return this
   }
 
   public setDisabled() {
-    this.disabled = true
+    super.setDisabled(true)
+
     return this
   }
 
   public setEnabled() {
-    this.disabled = false
+    super.setDisabled(false)
+
     return this
   }
 
-  public build(content?: string | InteractionContent) {
+  public build(content?: string | InteractionReplyOptions) {
     if(typeof content === 'string') {
       return {
         content: content ?? '',
@@ -74,6 +73,7 @@ export default class ButtonBuilder {
         ]
       }
     }
+
     else {
       return {
         components: [

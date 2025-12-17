@@ -47,6 +47,14 @@ export default createCommand({
         }
       )
 
-    await ctx.send(menu.build(embed.build()))
+    await ctx.send({
+      embeds: [embed],
+      components: [
+        {
+          type: 1,
+          components: [menu.toJSON()]
+        }
+      ]
+    })
   }
 })

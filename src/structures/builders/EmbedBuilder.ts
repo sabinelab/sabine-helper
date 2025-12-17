@@ -1,92 +1,99 @@
-import type { EmbedAuthorOptions, EmbedField, EmbedFooterOptions, EmbedImageOptions, InteractionContent } from 'oceanic.js'
+import {
+  EmbedBuilder as DJSEmbedBuilder,
+  type EmbedAuthorOptions,
+  type APIEmbedField,
+  type EmbedFooterOptions,
+  type InteractionReplyOptions
+} from 'discord.js'
 
-export default class EmbedBuilder {
-  public author?: EmbedAuthorOptions
-  public title?: string
-  public description?: string
-  public fields?: EmbedField[] = []
-  public image?: EmbedImageOptions
-  public thumbnail?: EmbedImageOptions
-  public timestamp?: string
-  public footer?: EmbedFooterOptions
-  public color?: number = 10086557 // discord logo color
+export default class EmbedBuilder extends DJSEmbedBuilder {
+  public constructor() {
+    super()
+    super.setColor(6719296)
+  }
 
   public setAuthor(options: EmbedAuthorOptions) {
-    this.author = options
+    super.setAuthor(options)
+
     return this
   }
 
   public setTitle(title: string) {
-    this.title = title
+    super.setTitle(title)
+
     return this
   }
 
   public setDesc(desc: string) {
-    this.description = desc
+    super.setDescription(desc)
+
     return this
   }
 
   public addField(name: string, value: string, inline = false) {
-    this.fields?.push({ name, value, inline })
+    super.addFields({ name, value, inline })
+
     return this
   }
 
-  public addFields(fields: EmbedField[]) {
-    fields.forEach(field => {
-      this.fields?.push({
-        name: field.name,
-        value: field.value,
-        inline: field.inline
-      })
-    })
+  public addFields(fields: APIEmbedField[]) {
+    super.addFields(fields)
 
     return this
   }
 
   public setField(name: string, value: string, inline = false) {
-    this.fields = [
+    super.setFields(
       {
         name, value, inline
       }
-    ]
+    )
+
     return this
   }
 
-  public setFields(...fields: EmbedField[]) {
-    this.fields = fields
+  public setFields(...fields: APIEmbedField[]) {
+    super.setFields(fields)
+
     return this
   }
 
   public setImage(url: string) {
-    this.image = { url }
+    super.setImage(url)
+
     return this
   }
 
   public setThumb(url: string) {
-    this.thumbnail = { url }
+    super.setThumbnail(url)
+
     return this
   }
 
   public setTimestamp(timestamp = new Date()) {
-    this.timestamp = timestamp.toISOString()
+    super.setTimestamp(timestamp)
+
     return this
   }
 
   public setFooter(footer: EmbedFooterOptions) {
-    this.footer = footer
+    super.setFooter(footer)
+
     return this
   }
-  
-  public build(content?: string | InteractionContent) {
-    if(typeof content === 'string') {
+
+  public build(content?: string | InteractionReplyOptions) {
+    if(typeof content === 'string' || !content) {
       return {
         content: content ?? '',
-        embeds: [this]
+        embeds: [this.toJSON()],
+        components: []
       }
     }
+
     else {
       return {
-        embeds: [this],
+        embeds: [this.toJSON()],
         ...content
       }
     }

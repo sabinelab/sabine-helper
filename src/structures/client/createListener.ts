@@ -1,4 +1,4 @@
-import type { ClientEvents } from 'oceanic.js'
+import type { ClientEvents } from 'discord.js'
 import App from './App'
 
 type Listener<T extends keyof ClientEvents> = {
@@ -6,6 +6,6 @@ type Listener<T extends keyof ClientEvents> = {
   run: (client: App, ...args: ClientEvents[T]) => Promise<unknown>
 }
 
-export default function<T extends keyof ClientEvents>(listener: Listener<T>): Listener<T> {
+export default function <T extends keyof ClientEvents>(listener: Listener<T>): Listener<T> {
   return listener
 }

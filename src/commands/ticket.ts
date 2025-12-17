@@ -1,4 +1,4 @@
-import { TextChannel } from 'oceanic.js'
+import { TextChannel } from 'discord.js'
 import createCommand from '../structures/command/createCommand'
 import ButtonBuilder from '../structures/builders/ButtonBuilder'
 
@@ -8,29 +8,45 @@ export default createCommand({
   async run({ ctx, client }) {
     await ctx.message.delete()
 
-    const channel = client.getChannel('1277285687074357313') as TextChannel
+    const channel = client.channels.cache.get('1277285687074357313') as TextChannel
 
-    const messages = await channel.getMessages()
-    const message = messages.filter(m => m.author.id === client.user.id)[0]
+    const messages = await channel.messages.fetch()
+    const message = messages.find(m => m.author.id === client.user?.id)
 
     if(!message) {
       const button = new ButtonBuilder()
-        .setStyle('blue')
+        .defineStyle('blue')
         .setLabel('Create a Ticket')
         .setEmoji('🤝')
         .setCustomId('ticket')
 
-      await channel.createMessage(button.build('## Customer Support Center\nIn this area, you can ask questions and solve issues with the bot by contacting the Sabine team.'))
+      await channel.send({
+        content: '## Customer Support Center\nIn this area, you can ask questions and solve issues with the bot by contacting the Sabine team.',
+        components: [
+          {
+            type: 1,
+            components: [button.toJSON()]
+          }
+        ]
+      })
     }
 
     else {
       const button = new ButtonBuilder()
-        .setStyle('blue')
+        .defineStyle('blue')
         .setLabel('Create a Ticket')
         .setEmoji('🤝')
         .setCustomId('ticket')
 
-      await message.edit(button.build('## Customer Support Center\nIn this area, you can ask questions and solve issues with the bot by contacting the Sabine team.'))
+      await message.edit({
+        content: '## Customer Support Center\nIn this area, you can ask questions and solve issues with the bot by contacting the Sabine team.',
+        components: [
+          {
+            type: 1,
+            components: [button.toJSON()]
+          }
+        ]
+      })
     }
   }
 })

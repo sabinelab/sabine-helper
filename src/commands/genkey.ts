@@ -14,12 +14,12 @@ export default createCommand({
       }
     })
 
-    ctx.message.author.createDM().then(dm => dm.createMessage({
+    ctx.message.author.createDM().then(dm => dm.send({
       content: `Your Key Booster is \`${key.id}\`.\nDo not share with ANYONE.`
     }))
       .catch(() => ctx.send('Open your DM for this server.'))
       .then(() => {
-        ctx.message.createReaction('success:1300882212190945292')
+        ctx.message.react('1300882212190945292')
       })
   }
 })

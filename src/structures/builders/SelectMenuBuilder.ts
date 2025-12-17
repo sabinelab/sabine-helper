@@ -1,97 +1,83 @@
 import {
-  Constants,
-  type InteractionContent,
-  type NullablePartialEmoji,
-  type SelectOption,
-  type StringSelectMenu
-} from 'oceanic.js'
+  StringSelectMenuBuilder,
+  type InteractionReplyOptions,
+  type ComponentEmojiResolvable
+} from 'discord.js'
 
-export default class SelectMenuBuilder {
-  public type: number = Constants.ComponentTypes.STRING_SELECT
-  public customID!: string
-  public placeholder?: string
-  public options: SelectOption[] = []
-  public minValues?: number
-  public maxValues?: number
-  public disabled?: boolean
-
-  public constructor(type?: 3 | 5 | 6 | 7 | 8) {
-    if(type) this.type = type
-  }
-
+export default class SelectMenuBuilder extends StringSelectMenuBuilder {
   public setCustomId(id: string) {
-    this.customID = id
+    super.setCustomId(id)
+
     return this
   }
 
   public setPlaceholder(text: string) {
-    this.placeholder = text
+    super.setPlaceholder(text)
+
     return this
   }
 
-  public addOption(label: string, value: string, description?: string, emoji?: NullablePartialEmoji) {
-    this.options.push({ label, value, description, emoji })
+  public addOption(
+    label: string,
+    value: string,
+    description?: string,
+    emoji?: ComponentEmojiResolvable,
+    isDefault = false
+  ) {
+    super.addOptions({ label, value, description, emoji, default: isDefault })
+
     return this
   }
 
-  public addOptions(...options: SelectOption[]) {
-    this.options.push(...options)
-    return this
-  }
+  public setOption(
+    label: string,
+    value: string,
+    description?: string,
+    emoji?: ComponentEmojiResolvable,
+    isDefault = false
+  ) {
+    super.setOptions({ label, value, description, emoji, default: isDefault })
 
-  public setOption(label: string, value: string, description?: string, emoji?: NullablePartialEmoji) {
-    this.options = [{ label, value, description, emoji }]
-    return this
-  }
-
-  public setOptions(...options: SelectOption[]) {
-    this.options = options
     return this
   }
 
   public setMin(min: number) {
-    this.minValues = min
+    super.setMinValues(min)
+
     return this
   }
 
   public setMax(max: number) {
-    this.maxValues = max
+    super.setMaxValues(max)
+
     return this
   }
 
   public setDisabled(disabled = true) {
-    this.disabled = disabled
+    super.setDisabled(disabled)
+
     return this
   }
 
-  public build(content?: string | InteractionContent) {
-    const menu: StringSelectMenu = {
-      type: this.type,
-      customID: this.customID!,
-      placeholder: this.placeholder,
-      options: this.options,
-      minValues: this.minValues,
-      maxValues: this.maxValues,
-      disabled: this.disabled,
-    }
-    
+  public build(content?: string | InteractionReplyOptions) {
     if(typeof content === 'string') {
       return {
         content: content ?? '',
         components: [
           {
             type: 1,
-            components: [menu]
+            components: [this.toJSON()]
           }
         ]
       }
     }
+
     else {
       return {
         components: [
           {
             type: 1,
-            components: [menu]
+            components: [this.toJSON()]
           }
         ],
         ...content

@@ -1,4 +1,4 @@
-import { Client, type ClientOptions } from 'oceanic.js'
+import { Client, type ClientOptions } from 'discord.js'
 import { readdirSync } from 'node:fs'
 import path from 'path'
 import type { Command } from '../command/createCommand'
@@ -14,13 +14,13 @@ export default class App extends Client {
   public aliases: Map<string, string> = new Map()
   public prisma: typeof prisma
 
-  public constructor(options?: ClientOptions) {
+  public constructor(options: ClientOptions) {
     super(options)
 
     this.prisma = prisma
   }
 
-  public override async connect() {
+  public async connect() {
     for(const file of readdirSync(path.join(__dirname, '../../listeners'))) {
       const listener = (await import(`../../listeners/${file}`)).default.default ?? (await import(`../../listeners/${file}`)).default
 
@@ -40,6 +40,6 @@ export default class App extends Client {
       }
     }
 
-    await super.connect()
+    await super.login(process.env.BOT_TOKEN)
   }
 }

@@ -1,23 +1,25 @@
 import { type FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
 import fastify from 'fastify'
-import { TextChannel } from 'oceanic.js'
+import { TextChannel } from 'discord.js'
 import App from './structures/client/App'
 import { SabineUser } from './database'
 import EmbedBuilder from './structures/builders/EmbedBuilder'
 
+console.log(SabineUser)
+
 export const client = new App({
-  auth: 'Bot ' + process.env.BOT_TOKEN,
-  gateway: {
-    intents: ['ALL'],
-    autoReconnect: true
-  }
+  allowedMentions: {
+    parse: ['users', 'roles'],
+    repliedUser: true
+  },
+  intents: ['GuildMessages', 'GuildMembers', 'GuildBans', 'Guilds']
 })
 
 client.connect()
 
 const cache = new Set<string>()
 
-const webhook_route: FastifyPluginAsyncTypebox = async(fastify) => {
+const webhook_route: FastifyPluginAsyncTypebox = async (fastify) => {
   fastify.post('/mercadopago', {
     schema: {
       body: Type.Object({
@@ -27,7 +29,7 @@ const webhook_route: FastifyPluginAsyncTypebox = async(fastify) => {
         })
       })
     }
-  }, async(req) => {
+  }, async (req) => {
     if(req.body.type === 'payment') {
       const details = await fetch(
         `https://api.mercadopago.com/v1/payments/${req.body.data.id}`,
@@ -52,18 +54,18 @@ const webhook_route: FastifyPluginAsyncTypebox = async(fastify) => {
           .setDesc(`Sua compra de **${details.transaction_details.total_paid_amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}** foi aprovada e você já pode aproveitar seus benefícios!\n\nSua chave de ativação é \`${keyId}\`\nNão compartilhe com NINGUÉM!\n\nPara ativar sua chave, vá em https://canary.discord.com/channels/1233965003850125433/1313588710637568030 e use o comando \`${process.env.PREFIX}ativarchave <id do servidor>\``)
           .setFooter({ text: 'O tópico será deletado automaticamente após 45 minutos de inatividade' })
 
-        const channel = client.getChannel(args[0]) as TextChannel
+        const channel = client.channels.cache.get(args[0]) as TextChannel
 
-        if(channel) await channel.createMessage(embed.build())
+        if(channel) await channel.send({ embeds: [embed] })
       }
       else if(details.status === 'rejected') {
         const embed = new EmbedBuilder()
           .setTitle('Pagamento Rejeitado')
           .setDesc(`Sua compra de **${details.transaction_details.total_paid_amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}** foi rejeitada e não foi possível prosseguir com o pagamento!`)
 
-        const channel = client.getChannel(args[0]) as TextChannel
+        const channel = client.channels.cache.get(args[0]) as TextChannel
 
-        if(channel) await channel.createMessage(embed.build())
+        if(channel) await channel.send({ embeds: [embed] })
       }
     }
   })
@@ -85,7 +87,7 @@ const webhook_route: FastifyPluginAsyncTypebox = async(fastify) => {
           })
         })
       }
-    }, async(req, reply) => {
+    }, async (req, reply) => {
       if(req.body.type === 'checkout.session.completed') {
         const session = req.body.data.object
 
@@ -98,9 +100,9 @@ const webhook_route: FastifyPluginAsyncTypebox = async(fastify) => {
           .setDesc(`Your purchase of **${(session.amount_total / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}** has been approved and you can now enjoy your benefits!\n\nYour activation key is \`${keyId}\`\nDo not share with ANYONE!\n\nTo activate your key, go to https://canary.discord.com/channels/1233965003850125433/1313588710637568030 and use the command \`${process.env.PREFIX}activatekey <server ID>\``)
           .setFooter({ text: 'The thread will be deleted automatically after 45 minutes of inactivity' })
 
-        const channel = client.getChannel(session.metadata!.thread) as TextChannel
+        const channel = client.channels.cache.get(session.metadata!.thread) as TextChannel
 
-        await channel.createMessage(embed.build())
+        await channel.send({ embeds: [embed] })
 
         reply.code(200).send({ message: 'Payment received' })
       }
@@ -111,9 +113,9 @@ const webhook_route: FastifyPluginAsyncTypebox = async(fastify) => {
           .setTitle('Payment Failed')
           .setDesc(`Your purchase of **${session.amount_total?.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}** has been rejected and it was not possible to proceed with the payment!`)
 
-        const channel = client.getChannel(session.metadata!.thread) as TextChannel
+        const channel = client.channels.cache.get(session.metadata!.thread) as TextChannel
 
-        await channel.createMessage(embed.build())
+        await channel.send({ embeds: [embed] })
 
         reply.code(400).send({ message: 'Payment rejected' })
       }

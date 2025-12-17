@@ -30,6 +30,6 @@ export default createCommand({
 
     await user.addPlayerToRoster(player.id.toString(), 'CLAIM_PLAYER_BY_COMMAND')
 
-    await ctx.send(`${_user.mention} received **${player.name} (${player.collection})** sucessfully!`)
+    await ctx.send(`${_user.toString()} received **${player.name} (${player.collection})** sucessfully!`)
   }
 })

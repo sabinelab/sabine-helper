@@ -6,7 +6,7 @@ export default createCommand({
   onlyDev: true,
   async run({ ctx }) {
     const args = {
-      add: async() => {
+      add: async () => {
         const guild = await SabineGuild.fetch(ctx.args[1])
 
         if(!guild) {
@@ -25,7 +25,7 @@ export default createCommand({
         await redis.del(`guild:${guild.id}`)
         await ctx.send('Guild added!')
       },
-      remove: async() => {
+      remove: async () => {
         const guild = await SabineGuild.fetch(ctx.args[1])
 
         if(!guild) {
