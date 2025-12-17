@@ -10,7 +10,7 @@ export const client = new App({
     parse: ['users', 'roles'],
     repliedUser: true
   },
-  intents: ['GuildMessages', 'GuildMembers', 'GuildBans', 'Guilds']
+  intents: ['GuildMessages', 'GuildMembers', 'GuildBans', 'Guilds', 'MessageContent']
 })
 
 client.connect()
