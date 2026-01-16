@@ -6,5 +6,4 @@ services:
     image: sabine-core
     container_name: sabine-core
     restart: unless-stopped
-    ports:
-      - '3000:3000'
+    network_mode: host
