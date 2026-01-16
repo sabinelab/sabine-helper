@@ -61,5 +61,5 @@ export const prisma = new PrismaClient({ adapter })
       }
     }
   })
-export * from './Guild'
-export * from './User'
+export * from './schemas/GuildSchema'
+export * from './schemas/UserSchema'
