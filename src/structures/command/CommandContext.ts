@@ -1,16 +1,16 @@
-import {
+import type {
+  AttachmentBuilder,
+  AttachmentPayload,
+  Guild,
   Message,
-  type MessageReplyOptions,
-  type AttachmentBuilder,
-  type AttachmentPayload,
-  Guild
+  MessageReplyOptions
 } from 'discord.js'
-import App from '../client/App'
-import { SabineGuild, SabineUser } from '@/database'
+import type { GuildSchema, UserSchema } from '@/database'
+import type App from '../client/App'
 
 type Database = {
-  user: SabineUser,
-  guild: SabineGuild
+  user: UserSchema
+  guild: GuildSchema
 }
 
 type CommandContextOptions = {
@@ -36,12 +36,15 @@ export default class CommandContext {
     this.args = options.args
   }
 
-  public async send(content: string | MessageReplyOptions, files?: (AttachmentBuilder | AttachmentPayload)[]) {
-    if(typeof content === 'string') {
+  public async send(
+    content: string | MessageReplyOptions,
+    files?: (AttachmentBuilder | AttachmentPayload)[]
+  ) {
+    if (typeof content === 'string') {
       content = { content }
     }
 
-    if(files) {
+    if (files) {
       content = {
         ...content,
         files

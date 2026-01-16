@@ -31,19 +31,24 @@ export default createCommand({
 
     const embed = new EmbedBuilder()
       .setTitle('PREMIUM')
-      .setDesc('Use this panel to purchase one of our plans and gain exclusive advantages for your server!')
+      .setDesc(
+        'Use this panel to purchase one of our plans and gain exclusive advantages for your server!'
+      )
       .setFields(
         {
           name: 'Premium Booster',
-          value: '- Key Booster generated manually\n  - Can be activated on up to one server\n  - You can add up to 10 tournaments\n  - Lasts as long as the boost is active'
+          value:
+            '- Key Booster generated manually\n  - Can be activated on up to one server\n  - You can add up to 10 tournaments\n  - Lasts as long as the boost is active'
         },
         {
           name: 'Premium',
-          value: '- Key Premium generated automatically\n  - Can be activated on up to **2 different servers**\n  - You can add up to 20 tournaments\n  - News feature unlocked\n  - Live matches feature unlocked\n- Bonus coins and fates in `/daily`\n- Cooldown for `/claim` reduced to **5 minutes**'
+          value:
+            '- Key Premium generated automatically\n  - Can be activated on up to **2 different servers**\n  - You can add up to 20 tournaments\n  - News feature unlocked\n  - Live matches feature unlocked\n- Bonus coins and fates in `/daily`\n- Cooldown for `/claim` reduced to **5 minutes**'
         },
         {
           name: 'Payment methods',
-          value: '- <:mercadopago:1313901326744293427> Mercado Pago\n- <:stripe:1409597720313987204> Stripe\n- <:credit_card:1409598374000463913> Card'
+          value:
+            '- <:mercadopago:1313901326744293427> Mercado Pago\n- <:stripe:1409597720313987204> Stripe\n- <:credit_card:1409598374000463913> Card'
         }
       )
 

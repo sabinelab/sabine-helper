@@ -31,7 +31,7 @@
     "start": "bun src/index.ts",
     "dev": "bun --watch src/index.ts",
     "build": "eslint && tsgo",
-    "lint": "eslint",
+    "lint": "biome check",
     "check": "tsgo",
     "gen": "bunx --bun prisma generate"
   },

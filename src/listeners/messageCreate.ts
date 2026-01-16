@@ -1,31 +1,48 @@
-import { ChannelType, Message } from 'discord.js'
+import { ChannelType, type Message } from 'discord.js'
+import { GuildSchema, UserSchema } from '../database'
 import createListener from '../structures/client/createListener'
-import { SabineGuild, SabineUser } from '../database'
 import CommandContext from '../structures/command/CommandContext'
 import Logger from '../structures/util/Logger'
 
 export default createListener({
   name: 'messageCreate',
   async run(client, message) {
-    if(message.author.bot) return
-    if(message.channel?.type !== ChannelType.GuildText) return
-    if(!message.guild) return
-    if(!message.member) return
-    if(!message.content.toLowerCase().startsWith(process.env.PREFIX)) return
+    if (message.author.bot) return
+    if (message.channel?.type !== ChannelType.GuildText) return
+    if (!message.guild) return
+    if (!message.member) return
+    if (!message.content.toLowerCase().startsWith(process.env.PREFIX)) return
 
     const messageArray = message.content.split(' ')
     const command = messageArray.shift()!.toLowerCase()
     const args = messageArray.slice(0)
-    const cmd = client.commands.get(command.slice(process.env.PREFIX.length)) || client.commands.get(client.aliases.get(command.slice(process.env.PREFIX.length))!)
+    const cmd =
+      client.commands.get(command.slice(process.env.PREFIX.length)) ||
+      client.commands.get(client.aliases.get(command.slice(process.env.PREFIX.length))!)
 
-    if(!cmd) return
-    if(cmd.onlyDev && message.author.id !== '441932495693414410') return
-    if(cmd.onlyMod && !['1237458600046104617', '1237458505196114052', '1237457762502574130'].some(r => message.member?.roles.cache.has(r))) return
-    if(cmd.onlyBooster && !message.member.premiumSince) return
-    if(cmd.onlyBoosterAndPremium && !['1265770785893515285', '1314272663316856863', '1314272739917303888', '1314272766891003945'].some(r => message.member?.roles.cache.has(r))) return
+    if (!cmd) return
+    if (cmd.onlyDev && message.author.id !== '441932495693414410') return
+    if (
+      cmd.onlyMod &&
+      !['1237458600046104617', '1237458505196114052', '1237457762502574130'].some(r =>
+        message.member?.roles.cache.has(r)
+      )
+    )
+      return
+    if (cmd.onlyBooster && !message.member.premiumSince) return
+    if (
+      cmd.onlyBoosterAndPremium &&
+      ![
+        '1265770785893515285',
+        '1314272663316856863',
+        '1314272739917303888',
+        '1314272766891003945'
+      ].some(r => message.member?.roles.cache.has(r))
+    )
+      return
 
-    const user = await SabineUser.fetch(message.author.id) ?? new SabineUser(message.author.id)
-    const guild = await SabineGuild.fetch(message.guild.id) ?? new SabineGuild(message.guild.id)
+    const user = (await UserSchema.fetch(message.author.id)) ?? new UserSchema(message.author.id)
+    const guild = (await GuildSchema.fetch(message.guild.id)) ?? new GuildSchema(message.guild.id)
 
     const ctx = new CommandContext({
       db: {
@@ -38,11 +55,10 @@ export default createListener({
       args
     })
 
-    const getUser = async(user: string) => {
+    const getUser = async (user: string) => {
       try {
         return await client.users.fetch(user.replace(/[<@!>]/g, ''))
-      }
-      catch(e) {
+      } catch (e) {
         new Logger(client).error(e as Error)
       }
     }
@@ -51,10 +67,9 @@ export default createListener({
       return ctx.guild.members.cache.get(member.replace(/[<@!>]/g, ''))
     }
 
-    cmd.run({ ctx, getMember, getUser, client })
-      .catch(e => {
-        new Logger(client).error(e)
-        ctx.send(`An unexpected error has occurred...\n\`${e}\``)
-      })
+    cmd.run({ ctx, getMember, getUser, client }).catch(e => {
+      new Logger(client).error(e)
+      ctx.send(`An unexpected error has occurred...\n\`${e}\``)
+    })
   }
 })

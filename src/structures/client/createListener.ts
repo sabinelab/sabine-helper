@@ -1,5 +1,5 @@
 import type { ClientEvents } from 'discord.js'
-import App from './App'
+import type App from './App'
 
 type Listener<T extends keyof ClientEvents> = {
   name: T

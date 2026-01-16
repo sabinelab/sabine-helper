@@ -1,6 +1,6 @@
-import { GuildMember, User } from 'discord.js'
-import App from '../client/App'
-import CommandContext from './CommandContext'
+import type { GuildMember, User } from 'discord.js'
+import type App from '../client/App'
+import type CommandContext from './CommandContext'
 
 type CommandOptions = {
   ctx: CommandContext
@@ -27,6 +27,6 @@ export type Command = {
   createInteraction?: (options: CreateComponentInteractionOptions) => Promise<unknown>
 }
 
-export default function(command: Command) {
+export default function (command: Command) {
   return command
 }

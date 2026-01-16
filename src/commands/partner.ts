@@ -1,4 +1,4 @@
-import { prisma, SabineGuild } from '@db'
+import { GuildSchema, prisma } from '@db'
 import createCommand from '../structures/command/createCommand'
 
 export default createCommand({
@@ -6,10 +6,10 @@ export default createCommand({
   onlyDev: true,
   async run({ ctx }) {
     const args = {
-      add: async() => {
-        const guild = await SabineGuild.fetch(ctx.args[1])
+      add: async () => {
+        const guild = await GuildSchema.fetch(ctx.args[1])
 
-        if(!guild) {
+        if (!guild) {
           return await ctx.send('This guild does not exists in database')
         }
 
@@ -24,10 +24,10 @@ export default createCommand({
         })
         await ctx.send('Guild added!')
       },
-      remove: async() => {
-        const guild = await SabineGuild.fetch(ctx.args[1])
+      remove: async () => {
+        const guild = await GuildSchema.fetch(ctx.args[1])
 
-        if(!guild) {
+        if (!guild) {
           return await ctx.send('This guild does not exists in database')
         }
 
@@ -43,13 +43,15 @@ export default createCommand({
         await ctx.send('Guild removed!')
       }
     }
-    if(
+    if (
       !['add', 'remove'].includes(ctx.args[0]) ||
       !args[ctx.args[0] as 'add' | 'remove'] ||
       !ctx.args[1] ||
       !ctx.args[2]
     ) {
-      return await ctx.send(`Invalid argument! Use \`${process.env.PREFIX}partner add/remove [guild_id] [guild_invite]\``)
+      return await ctx.send(
+        `Invalid argument! Use \`${process.env.PREFIX}partner add/remove [guild_id] [guild_invite]\``
+      )
     }
     await args[ctx.args[0] as 'add' | 'remove']()
   }

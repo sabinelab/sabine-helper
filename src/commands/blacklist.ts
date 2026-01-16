@@ -9,12 +9,12 @@ export default createCommand({
     let reason = ctx.args.slice(3).join(' ')
     const time = ms(ctx.args[3] ?? 'asd')
 
-    if(time) reason = ctx.args.slice(4).join(' ')
+    if (time) reason = ctx.args.slice(4).join(' ')
 
-    if(ctx.args[0] === 'add') {
+    if (ctx.args[0] === 'add') {
       const args = {
-        user: async() => {
-          if(!ctx.args[2]) return await ctx.send('Missing argument `[id]`')
+        user: async () => {
+          if (!ctx.args[2]) return await ctx.send('Missing argument `[id]`')
 
           const blacklist = await client.prisma.blacklist.findUnique({
             where: {
@@ -23,9 +23,9 @@ export default createCommand({
             }
           })
 
-          if(blacklist) return await ctx.send('This user is already banned.')
+          if (blacklist) return await ctx.send('This user is already banned.')
 
-          if(!reason) return await ctx.send('Missing argument `[reason]`.')
+          if (!reason) return await ctx.send('Missing argument `[reason]`.')
 
           await client.prisma.user.delete({
             where: {
@@ -39,15 +39,17 @@ export default createCommand({
             data: {
               id: ctx.args[2],
               reason,
-              ends_at: time ? new Date(Date.now() + time) : null,
+              endsAt: time ? new Date(Date.now() + time) : null,
               type: 'USER'
             }
           })
 
-          await ctx.send(`\`${u?.tag}\` (\`${u?.id}\`) has been banned from the bot ${time ? 'for ' + ms(time) : 'forever'} for \`${reason}\``)
+          await ctx.send(
+            `\`${u?.tag}\` (\`${u?.id}\`) has been banned from the bot ${time ? 'for ' + ms(time) : 'forever'} for \`${reason}\``
+          )
         },
-        guild: async() => {
-          if(!ctx.args[2]) return await ctx.send('Missing argument `[id]`')
+        guild: async () => {
+          if (!ctx.args[2]) return await ctx.send('Missing argument `[id]`')
 
           const blacklist = await client.prisma.blacklist.findUnique({
             where: {
@@ -56,9 +58,9 @@ export default createCommand({
             }
           })
 
-          if(blacklist) return await ctx.send('This guild is already banned.')
+          if (blacklist) return await ctx.send('This guild is already banned.')
 
-          if(!reason) return await ctx.send('Missing argument `[reason]`.')
+          if (!reason) return await ctx.send('Missing argument `[reason]`.')
 
           await client.prisma.guild.delete({
             where: {
@@ -72,25 +74,26 @@ export default createCommand({
             data: {
               id: ctx.args[2],
               reason,
-              ends_at: time ? new Date(Date.now() + time) : null,
+              endsAt: time ? new Date(Date.now() + time) : null,
               type: 'GUILD',
               name: g?.name
             }
           })
 
-          await ctx.send(`\`${g?.name}\` (\`${ctx.args[2]}\`) has been banned from the bot ${time ? 'for ' + ms(time) : 'forever'} for \`${reason}\``)
+          await ctx.send(
+            `\`${g?.name}\` (\`${ctx.args[2]}\`) has been banned from the bot ${time ? 'for ' + ms(time) : 'forever'} for \`${reason}\``
+          )
         }
       }
-      if(!Object.keys(args).some(key => key === ctx.args[1])) {
+      if (!Object.keys(args).some(key => key === ctx.args[1])) {
         return await ctx.send('Missing argument `user` or `guild`.')
       }
 
       await args[ctx.args[1] as 'user' | 'guild']()
-    }
-    else if(ctx.args[0] === 'remove') {
+    } else if (ctx.args[0] === 'remove') {
       const args = {
-        user: async() => {
-          if(!ctx.args[2]) return await ctx.send('Missing argument `[id]`')
+        user: async () => {
+          if (!ctx.args[2]) return await ctx.send('Missing argument `[id]`')
 
           const blacklist = await client.prisma.blacklist.findUnique({
             where: {
@@ -99,7 +102,7 @@ export default createCommand({
             }
           })
 
-          if(!blacklist) return await ctx.send('This user is not banned.')
+          if (!blacklist) return await ctx.send('This user is not banned.')
 
           const u = await getUser(ctx.args[2])
           await client.prisma.blacklist.delete({
@@ -111,8 +114,8 @@ export default createCommand({
 
           await ctx.send(`\`${u?.tag}\` (\`${u?.id}\`) has been unbanned from the bot.`)
         },
-        guild: async() => {
-          if(!ctx.args[2]) return await ctx.send('Missing argument `[id]`')
+        guild: async () => {
+          if (!ctx.args[2]) return await ctx.send('Missing argument `[id]`')
 
           const blacklist = await client.prisma.blacklist.findUnique({
             where: {
@@ -121,7 +124,7 @@ export default createCommand({
             }
           })
 
-          if(!blacklist) return await ctx.send('This guild is not banned.')
+          if (!blacklist) return await ctx.send('This guild is not banned.')
 
           await client.prisma.blacklist.delete({
             where: {
@@ -133,12 +136,14 @@ export default createCommand({
         }
       }
 
-      if(!Object.keys(args).some(key => key === ctx.args[1])) {
+      if (!Object.keys(args).some(key => key === ctx.args[1])) {
         return await ctx.send('Missing argument `user` or `guild`.')
       }
 
       await args[ctx.args[1] as 'user' | 'guild']()
-    }
-    else await ctx.send(`Missing arguments! Try \`${process.env.PREFIX}blacklist add/remove user/guild [id] [reason]\``)
+    } else
+      await ctx.send(
+        `Missing arguments! Try \`${process.env.PREFIX}blacklist add/remove user/guild [id] [reason]\``
+      )
   }
 })

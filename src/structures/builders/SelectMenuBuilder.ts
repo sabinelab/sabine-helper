@@ -1,7 +1,7 @@
 import {
-  StringSelectMenuBuilder,
+  type ComponentEmojiResolvable,
   type InteractionReplyOptions,
-  type ComponentEmojiResolvable
+  StringSelectMenuBuilder
 } from 'discord.js'
 
 export default class SelectMenuBuilder extends StringSelectMenuBuilder {
@@ -60,7 +60,7 @@ export default class SelectMenuBuilder extends StringSelectMenuBuilder {
   }
 
   public build(content?: string | InteractionReplyOptions) {
-    if(typeof content === 'string') {
+    if (typeof content === 'string') {
       return {
         content: content ?? '',
         components: [
@@ -70,9 +70,7 @@ export default class SelectMenuBuilder extends StringSelectMenuBuilder {
           }
         ]
       }
-    }
-
-    else {
+    } else {
       return {
         components: [
           {

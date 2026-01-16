@@ -1,15 +1,10 @@
-import {
-  $Enums,
-  type Premium,
-  type User
-} from '@generated'
+import type { $Enums, Premium, User } from '@generated'
+import type { TextChannel } from 'discord.js'
+import { prisma } from '@/database'
+import { hydrateData } from '@/database/hydrate-data'
+import { updateCache, voidCatch } from '@/database/update-cache'
 import { client } from '../../'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder'
-import { TextChannel } from 'discord.js'
-import { prisma } from '@/database'
-import { updateCache, voidCatch } from '@/database/update-cache'
-import { hydrateData } from '@/database/hydrate-data'
-
 
 export class UserSchema implements User {
   public id: string
@@ -80,7 +75,9 @@ export class UserSchema implements User {
           userId: this.id
         },
         update: {
-          expiresAt: !premium?.expiresAt ? expiresAt : new Date(premium.expiresAt.getTime() + 2592000000)
+          expiresAt: !premium?.expiresAt
+            ? expiresAt
+            : new Date(premium.expiresAt.getTime() + 2592000000)
         },
         where: {
           userId: this.id
@@ -103,17 +100,15 @@ export class UserSchema implements User {
     const embed = new EmbedBuilder()
       .setTitle('New register')
       .setDesc(`User: ${user?.toString()} (${this.id})`)
-      .setFields(
-        {
-          name: by,
-          value: 'PREMIUM'
-        }
-      )
+      .setFields({
+        name: by,
+        value: 'PREMIUM'
+      })
 
     const webhooks = await channel.fetchWebhooks()
     let webhook = webhooks.find(w => w.name === client.user?.username + ' Logger')
 
-    if(!webhook) webhook = await channel.createWebhook({ name: client.user?.username + ' Logger' })
+    if (!webhook) webhook = await channel.createWebhook({ name: client.user?.username + ' Logger' })
 
     await webhook.send({
       avatarURL: client.user?.displayAvatarURL({ size: 2048 }),

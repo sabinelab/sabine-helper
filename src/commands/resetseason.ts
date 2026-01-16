@@ -48,19 +48,18 @@ export default createCommand({
       prisma.prediction.deleteMany(),
       prisma.transaction.deleteMany()
     ])
-    
+
     let cursor = '0'
 
     do {
       const [next, keys] = await Bun.redis.scan(cursor, 'MATCH', 'user:*', 'COUNT', 100)
 
-      if(keys.length) {
+      if (keys.length) {
         await Bun.redis.del(...keys)
       }
 
       cursor = next
-    }
-    while(cursor !== '0')
+    } while (cursor !== '0')
 
     await msg.edit('Season reseted successfully!')
   }

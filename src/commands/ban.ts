@@ -1,4 +1,4 @@
-import { TextChannel } from 'discord.js'
+import type { TextChannel } from 'discord.js'
 import createCommand from '../structures/command/createCommand'
 
 export default createCommand({
@@ -10,32 +10,41 @@ export default createCommand({
 
     const user = await getUser(ctx.args[0])
 
-    if(!user) {
+    if (!user) {
       return await ctx.send('Please provide a valid user.')
     }
 
     let reason = ctx.args.slice(1).join(' ')
 
-    if(!reason) {
+    if (!reason) {
       return await ctx.send('Please provide a reason.')
     }
 
-    switch(reason) {
-      case 'div': reason = 'Unauthorized promotion in text or voice channels.'
+    switch (reason) {
+      case 'div':
+        reason = 'Unauthorized promotion in text or voice channels.'
         break
-      case 'divdm': reason = 'Unauthorized promotion via direct message.'
+      case 'divdm':
+        reason = 'Unauthorized promotion via direct message.'
         break
-      case 'toxic': reason = 'Disrespectful behavior in text or voice channels.'
+      case 'toxic':
+        reason = 'Disrespectful behavior in text or voice channels.'
         break
-      case 'owo': reason = '1, 2, 3 testing... OwO'
+      case 'owo':
+        reason = '1, 2, 3 testing... OwO'
         break
-      case 'nsfw': reason = 'Sharing NSFW content in text or voice channels.'
+      case 'nsfw':
+        reason = 'Sharing NSFW content in text or voice channels.'
     }
 
-    await user.createDM().then(dm => dm.send({
-      content: `You have been banned from \`${ctx.guild.name}\` for \`${reason}\``
-    }))
-      .catch(() => { })
+    await user
+      .createDM()
+      .then(dm =>
+        dm.send({
+          content: `You have been banned from \`${ctx.guild.name}\` for \`${reason}\``
+        })
+      )
+      .catch(() => {})
 
     await ctx.guild.bans.create(user.id, {
       reason
@@ -45,16 +54,20 @@ export default createCommand({
 
     const channel = client.channels.cache.get(process.env.MOD_LOG) as TextChannel
 
-    channel.send({
-      content: `\`${user.tag}\` (\`${user.id}\`) have been banned for \`${reason}\``
-    })
+    channel
+      .send({
+        content: `\`${user.tag}\` (\`${user.id}\`) have been banned for \`${reason}\``
+      })
       .then(msg => {
-        msg.startThread({
-          name: `Ban ${user.tag} (${user.id})`
-        })
-          .then(t => t.send({
-            content: `${ctx.message.author.toString()}, send the evidence of the punishment here.`
-          }))
+        msg
+          .startThread({
+            name: `Ban ${user.tag} (${user.id})`
+          })
+          .then(t =>
+            t.send({
+              content: `${ctx.message.author.toString()}, send the evidence of the punishment here.`
+            })
+          )
       })
   }
 })

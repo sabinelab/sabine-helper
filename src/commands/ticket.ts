@@ -1,6 +1,6 @@
-import { TextChannel } from 'discord.js'
-import createCommand from '../structures/command/createCommand'
+import type { TextChannel } from 'discord.js'
 import ButtonBuilder from '../structures/builders/ButtonBuilder'
+import createCommand from '../structures/command/createCommand'
 
 export default createCommand({
   name: 'ticket',
@@ -13,7 +13,7 @@ export default createCommand({
     const messages = await channel.messages.fetch()
     const message = messages.find(m => m.author.id === client.user?.id)
 
-    if(!message) {
+    if (!message) {
       const button = new ButtonBuilder()
         .defineStyle('blue')
         .setLabel('Create a Ticket')
@@ -21,7 +21,8 @@ export default createCommand({
         .setCustomId('ticket')
 
       await channel.send({
-        content: '## Customer Support Center\nIn this area, you can ask questions and solve issues with the bot by contacting the Sabine team.',
+        content:
+          '## Customer Support Center\nIn this area, you can ask questions and solve issues with the bot by contacting the Sabine team.',
         components: [
           {
             type: 1,
@@ -29,9 +30,7 @@ export default createCommand({
           }
         ]
       })
-    }
-
-    else {
+    } else {
       const button = new ButtonBuilder()
         .defineStyle('blue')
         .setLabel('Create a Ticket')
@@ -39,7 +38,8 @@ export default createCommand({
         .setCustomId('ticket')
 
       await message.edit({
-        content: '## Customer Support Center\nIn this area, you can ask questions and solve issues with the bot by contacting the Sabine team.',
+        content:
+          '## Customer Support Center\nIn this area, you can ask questions and solve issues with the bot by contacting the Sabine team.',
         components: [
           {
             type: 1,

@@ -1,13 +1,13 @@
-import { Collection, TextChannel } from 'discord.js'
-import createListener from '../structures/client/createListener'
+import type { Collection, TextChannel } from 'discord.js'
 import Logger from '@/structures/util/Logger'
+import createListener from '../structures/client/createListener'
 
 export default createListener({
   name: 'clientReady',
   async run(client) {
     Logger.send(`${client.user?.tag} online!`)
 
-    const removeUserFromBlacklist = async() => {
+    const removeUserFromBlacklist = async () => {
       const blacklist = await client.prisma.blacklist.findMany({
         where: {
           ends_at: {
@@ -17,12 +17,12 @@ export default createListener({
         }
       })
 
-      if(!blacklist.length) return
+      if (!blacklist.length) return
 
-      for(const user of blacklist) {
-        if(!user.ends_at) continue
+      for (const user of blacklist) {
+        if (!user.ends_at) continue
 
-        if(user.ends_at < new Date()) {
+        if (user.ends_at < new Date()) {
           await client.prisma.blacklist.delete({
             where: {
               id: user.id,
@@ -32,11 +32,13 @@ export default createListener({
 
           const channel = client.channels.cache.get('1237496064580386917') as TextChannel
 
-          await channel.send({ content: `[Auto] - \`${(await client.users.fetch(user.id)).tag}\` (\`${user.id}\`) has been unbanned from the bot.` })
+          await channel.send({
+            content: `[Auto] - \`${(await client.users.fetch(user.id)).tag}\` (\`${user.id}\`) has been unbanned from the bot.`
+          })
         }
       }
     }
-    const removeGuildFromBlacklist = async() => {
+    const removeGuildFromBlacklist = async () => {
       const blacklist = await client.prisma.blacklist.findMany({
         where: {
           ends_at: {
@@ -46,12 +48,12 @@ export default createListener({
         }
       })
 
-      if(!blacklist.length) return
+      if (!blacklist.length) return
 
-      for(const guild of blacklist) {
-        if(!guild.ends_at) continue
+      for (const guild of blacklist) {
+        if (!guild.ends_at) continue
 
-        if(guild.ends_at < new Date()) {
+        if (guild.ends_at < new Date()) {
           await client.prisma.blacklist.delete({
             where: {
               id: guild.id,
@@ -61,32 +63,39 @@ export default createListener({
 
           const channel = client.channels.cache.get('1237496064580386917') as TextChannel
 
-          await channel.send({ content: `[Auto] - \`${guild.id}\` has been unbanned from the bot.` })
+          await channel.send({
+            content: `[Auto] - \`${guild.id}\` has been unbanned from the bot.`
+          })
         }
       }
     }
 
-    const removePremium = async() => {
+    const removePremium = async () => {
       const users = await client.prisma.user.findMany({
         include: {
           premium: true
         }
       })
 
-      if(!users.length) return
+      if (!users.length) return
 
-      for(const user of users) {
-        if(!user.premium) continue
-        if(user.premium.expires_at > new Date()) continue
+      for (const user of users) {
+        if (!user.premium) continue
+        if (user.premium.expires_at > new Date()) continue
 
         const member = client.guilds.cache.get('1233965003850125433')!.members.cache.get(user.id)
 
-        if(member) {
+        if (member) {
           await member.roles.remove('1314272663316856863')
 
-          member.user.createDM().then(dm => dm.send({
-            content: 'Your premium has expired! If you want to renew your premium, go to https://canary.discord.com/channels/1233965003850125433/1313902950426345492 and select a premium!'
-          }))
+          member.user
+            .createDM()
+            .then(dm =>
+              dm.send({
+                content:
+                  'Your premium has expired! If you want to renew your premium, go to https://canary.discord.com/channels/1233965003850125433/1313902950426345492 and select a premium!'
+              })
+            )
             .catch()
         }
 
@@ -105,25 +114,29 @@ export default createListener({
         })
       }
     }
-    const sendPremiumWarn = async() => {
+    const sendPremiumWarn = async () => {
       const users = await client.prisma.user.findMany({
         include: {
           premium: true
         }
       })
 
-      for(const user of users) {
-        if(user.warned) continue
-        if(!user.premium) continue
+      for (const user of users) {
+        if (user.warned) continue
+        if (!user.premium) continue
 
         const member = client.guilds.cache.get('1233965003850125433')!.members.cache.get(user.id)
 
-        if((user.premium.expires_at.getTime() - Date.now()) <= 2.592e+8) {
-          if(member) {
-            member.user.createDM().then(dm => dm.send({
-              content: `Your premium will expires <t:${(user.premium!.expires_at.getTime() / 1000).toFixed(0)}:R>! If you want to renew your premium, go to https://canary.discord.com/channels/1233965003850125433/1313902950426345492 and select a premium!`
-            }))
-              .catch(() => { })
+        if (user.premium.expires_at.getTime() - Date.now() <= 2.592e8) {
+          if (member) {
+            member.user
+              .createDM()
+              .then(dm =>
+                dm.send({
+                  content: `Your premium will expires <t:${(user.premium!.expires_at.getTime() / 1000).toFixed(0)}:R>! If you want to renew your premium, go to https://canary.discord.com/channels/1233965003850125433/1313902950426345492 and select a premium!`
+                })
+              )
+              .catch(() => {})
           }
         }
 
@@ -137,18 +150,22 @@ export default createListener({
         })
       }
     }
-    const deleteInactiveThreads = async() => {
+    const deleteInactiveThreads = async () => {
       const guild = client.guilds.cache.get('1233965003850125433')!
-      const channels = guild.channels.cache.filter(c => ['1313902950426345492', '1313588710637568030'].includes(c.id)) as Collection<string, TextChannel>
+      const channels = guild.channels.cache.filter(c =>
+        ['1313902950426345492', '1313588710637568030'].includes(c.id)
+      ) as Collection<string, TextChannel>
 
-      for(const channel of channels.values()) {
-        const threads = channel.threads.cache.filter(t => Date.now() - new Date(t.createdAt ?? '').getTime() >= 1000 * 60 * 45)
+      for (const channel of channels.values()) {
+        const threads = channel.threads.cache.filter(
+          t => Date.now() - new Date(t.createdAt ?? '').getTime() >= 1000 * 60 * 45
+        )
 
-        for(const thread of threads.values()) await thread.delete()
+        for (const thread of threads.values()) await thread.delete()
       }
     }
 
-    const deleteKeys = async() => {
+    const deleteKeys = async () => {
       const keysToDelete = await client.prisma.key.findMany({
         where: {
           expires_at: {
@@ -161,7 +178,7 @@ export default createListener({
         }
       })
 
-      if(!keysToDelete.length) return
+      if (!keysToDelete.length) return
 
       await client.prisma.$transaction([
         client.prisma.guildKey.deleteMany({
@@ -181,25 +198,25 @@ export default createListener({
       ])
     }
 
-    const verifyKeyBooster = async() => {
+    const verifyKeyBooster = async () => {
       const keys = await client.prisma.key.findMany({
         where: {
           type: 'BOOSTER'
         }
       })
 
-      if(!keys.length) return
+      if (!keys.length) return
 
       const keysToDelete: string[] = []
 
-      for(const key of keys) {
+      for (const key of keys) {
         const member = client.guilds.cache.get('1233965003850125433')!.members.cache.get(key.user)
-        if(!member || (member && !member.premiumSince)) {
+        if (!member || (member && !member.premiumSince)) {
           keysToDelete.push(key.id)
         }
       }
 
-      if(!keysToDelete.length) return
+      if (!keysToDelete.length) return
 
       await client.prisma.$transaction([
         client.prisma.guildKey.deleteMany({
@@ -218,11 +235,11 @@ export default createListener({
         })
       ])
     }
-    const verifyPartners = async() => {
+    const verifyPartners = async () => {
       const channel = client.channels.cache.get('1346170715165950086') as TextChannel
       const message = channel.messages.cache.find(m => m.author.id === client.user?.id)
 
-      if(!message) {
+      if (!message) {
         const guilds = await client.prisma.guild.findMany({
           where: {
             partner: true,
@@ -232,17 +249,16 @@ export default createListener({
           }
         })
 
-        if(!guilds.length) return
+        if (!guilds.length) return
 
         let content = '## Our official Partners\n'
 
-        for(const guild of guilds) {
+        for (const guild of guilds) {
           content += `- ${guild.invite}\n`
         }
 
         await channel.send({ content })
-      }
-      else {
+      } else {
         const guilds = await client.prisma.guild.findMany({
           where: {
             partner: true,
@@ -254,14 +270,14 @@ export default createListener({
 
         let content = '## Our official Partners\n'
 
-        for(const guild of guilds) {
+        for (const guild of guilds) {
           content += `- ${guild.invite}\n`
         }
 
         await message.edit({ content })
       }
     }
-    const runTasks = async() => {
+    const runTasks = async () => {
       await deleteKeys().catch(e => new Logger(client).error(e))
       await verifyKeyBooster().catch(e => new Logger(client).error(e))
       await deleteInactiveThreads().catch(e => new Logger(client).error(e))
