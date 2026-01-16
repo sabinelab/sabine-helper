@@ -51,6 +51,6 @@ export default class CommandContext {
       }
     }
 
-    return await this.message.reply(content)
+    return await this.message.channel.send(content)
   }
 }
