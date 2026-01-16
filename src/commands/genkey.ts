@@ -9,7 +9,7 @@ export default createCommand({
       data: {
         type: 'PREMIUM',
         user: ctx.message.author.id,
-        active_in: [],
+        activeIn: [],
         active: false
       }
     })

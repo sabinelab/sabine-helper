@@ -20,8 +20,8 @@ export default createCommand({
 
         let timestamp: string | undefined
 
-        if (ban.ends_at) {
-          timestamp = (ban.ends_at.getTime() / 1000).toFixed(0)
+        if (ban.endsAt) {
+          timestamp = (ban.endsAt.getTime() / 1000).toFixed(0)
         }
 
         const when = (ban.when.getTime() / 1000).toFixed(0)
@@ -43,8 +43,8 @@ export default createCommand({
 
         let timestamp: string | undefined
 
-        if (ban.ends_at) {
-          timestamp = (ban.ends_at.getTime() / 1000).toFixed(0)
+        if (ban.endsAt) {
+          timestamp = (ban.endsAt.getTime() / 1000).toFixed(0)
         }
 
         const when = (ban.when.getTime() / 1000).toFixed(0)

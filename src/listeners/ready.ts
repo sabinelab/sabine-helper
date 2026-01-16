@@ -10,7 +10,7 @@ export default createListener({
     const removeUserFromBlacklist = async () => {
       const blacklist = await client.prisma.blacklist.findMany({
         where: {
-          ends_at: {
+          endsAt: {
             not: null
           },
           type: 'USER'
@@ -20,9 +20,9 @@ export default createListener({
       if (!blacklist.length) return
 
       for (const user of blacklist) {
-        if (!user.ends_at) continue
+        if (!user.endsAt) continue
 
-        if (user.ends_at < new Date()) {
+        if (user.endsAt < new Date()) {
           await client.prisma.blacklist.delete({
             where: {
               id: user.id,
@@ -41,7 +41,7 @@ export default createListener({
     const removeGuildFromBlacklist = async () => {
       const blacklist = await client.prisma.blacklist.findMany({
         where: {
-          ends_at: {
+          endsAt: {
             not: null
           },
           type: 'GUILD'
@@ -51,9 +51,9 @@ export default createListener({
       if (!blacklist.length) return
 
       for (const guild of blacklist) {
-        if (!guild.ends_at) continue
+        if (!guild.endsAt) continue
 
-        if (guild.ends_at < new Date()) {
+        if (guild.endsAt < new Date()) {
           await client.prisma.blacklist.delete({
             where: {
               id: guild.id,
@@ -81,7 +81,7 @@ export default createListener({
 
       for (const user of users) {
         if (!user.premium) continue
-        if (user.premium.expires_at > new Date()) continue
+        if (user.premium.expiresAt > new Date()) continue
 
         const member = client.guilds.cache.get('1233965003850125433')!.members.cache.get(user.id)
 
@@ -127,13 +127,13 @@ export default createListener({
 
         const member = client.guilds.cache.get('1233965003850125433')!.members.cache.get(user.id)
 
-        if (user.premium.expires_at.getTime() - Date.now() <= 2.592e8) {
+        if (user.premium.expiresAt.getTime() - Date.now() <= 2.592e8) {
           if (member) {
             member.user
               .createDM()
               .then(dm =>
                 dm.send({
-                  content: `Your premium will expires <t:${(user.premium!.expires_at.getTime() / 1000).toFixed(0)}:R>! If you want to renew your premium, go to https://canary.discord.com/channels/1233965003850125433/1313902950426345492 and select a premium!`
+                  content: `Your premium will expires <t:${(user.premium!.expiresAt.getTime() / 1000).toFixed(0)}:R>! If you want to renew your premium, go to https://canary.discord.com/channels/1233965003850125433/1313902950426345492 and select a premium!`
                 })
               )
               .catch(() => {})
@@ -168,7 +168,7 @@ export default createListener({
     const deleteKeys = async () => {
       const keysToDelete = await client.prisma.key.findMany({
         where: {
-          expires_at: {
+          expiresAt: {
             lte: new Date()
           },
           type: 'PREMIUM'
