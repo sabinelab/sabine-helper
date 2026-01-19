@@ -9,7 +9,7 @@
     "body-parser": "2.2.1",
     "colors": "1.4.0",
     "discord-html-transcripts": "~3.2.0",
-    "enhanced-ms": "4.1.0",
+    "enhanced-ms": "4.2.0",
     "fastify": "5.6.2",
     "mercadopago": "2.11.0",
     "moment": "2.30.1",
